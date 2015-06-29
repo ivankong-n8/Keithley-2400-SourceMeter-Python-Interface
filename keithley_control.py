@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import time
-import serial_control as sc
+import keithley_serial as ks
 import numpy as np
 
 """
@@ -17,7 +17,7 @@ class Keithley:
 
     def __init__(self, port='/dev/tty.KeySerial1'):
         keithleyExists = True
-        self.ser = sc.start_serial(port=port)
+        self.ser = ks.start_serial(port=port)
         # Now run start up commands
         self.run_start_up_commands()
 
@@ -27,14 +27,14 @@ class Keithley:
             time.sleep(.01)   
 
     def open_serial(self):
-        sc.close_serial(self.ser)
+        ks.close_serial(self.ser)
 
     def close_serial(self):
-        sc.close_serial(self.ser)
+        ks.close_serial(self.ser)
 
     def send_command(self, command):
         if self.ser.isOpen():
-            response = sc.write(self.ser, command)
+            response = ks.write(self.ser, command)
             if response != '':
                 return response
             else:
@@ -44,7 +44,7 @@ class Keithley:
 
     def get_response(self, command, pause=.25):
         if self.ser.isOpen():
-            response = sc.write_and_read(self.ser, command, pause=pause)
+            response = ks.write_and_read(self.ser, command, pause=pause)
             if response != '':
                 return response
             else:

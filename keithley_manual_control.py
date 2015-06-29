@@ -33,7 +33,7 @@ class Example(QtGui.QMainWindow):
         port = '/dev/tty.usbserial'
         port = '/dev/tty.usbmodem1411'
         port = '/dev/tty.KeySerial1'
-        connected = True
+        connected = False
         if connected:
             self.keithley = kc.Keithley(port=port)
         else:
@@ -184,7 +184,7 @@ class Example(QtGui.QMainWindow):
             num_sweeps = int(self.numSweepsEdit.text())
             sweep_data = self.keithley.sweep(start=start,  stop=stop, 
                                         step=step, num_sweeps=num_sweeps)
-            print(sweep_data)
+            print(sweep_data[0])
             if sweep_data != None:
                 self.a0.setData(sweep_data[0], sweep_data[1])
                 self.a1.setData(sweep_data[1], sweep_data[2])
