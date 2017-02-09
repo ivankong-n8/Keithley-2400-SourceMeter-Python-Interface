@@ -1,18 +1,19 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import time
 import serial
 
 """
-Open a port for serial communication with the Keithley. 
+Open a port for serial communication with the Keithley.
 Returns: serial object
 """
 def start_serial(port='/dev/tty.KeySerial1'):
 
-    # Configure the serial connections. 
+    # Configure the serial connections.
     # These are specific to the Keithley 2400 SourceMeter.
-    # This device is configurable, but these are default (except for BAUD). 
-    # Using a carriage return only for termination. 
+    # This device is configurable, but these are default (except for BAUD).
+    # Using a carriage return only for termination.
     try:
         ser = serial.Serial(
             port=port,
@@ -28,10 +29,10 @@ def start_serial(port='/dev/tty.KeySerial1'):
         return ser
     except:
         print("Some went wrong...")
-    
+
 def write(ser, command):
     ser.write(command + '\r')
-     
+
 def open_serial(ser):
     ser.open()
 
@@ -48,7 +49,7 @@ def read(ser):
                 terminated = True
             else:
                 out.append(data)
-            
+
         if out != '':
             return ' '.join(out)
         else:

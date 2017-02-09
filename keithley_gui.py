@@ -1,15 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
-ZetCode PyQt5 tutorial 
+Keithley GUI
 
-In this example, we create a skeleton
-of a calculator using a QGridLayout.
+This script runs a GUI to control and record/plot data
+from the Keithley 2400 SourceMeter.
 
-author: Jan Bodnar
-website: zetcode.com 
-last edited: January 2015
+This GUI implmentation was originally inspired by the
+ZetCode PyQt5 tutorial by Jan Bodnar (zetcode.com)
+
+author: T. Max Roberts
 """
 
 import sys, time
@@ -20,40 +21,35 @@ import pyqtgraph as pg
 # For keithley
 import keithley_control as kc
 
-class Example(QtGui.QMainWindow):
-    
-    def __init__(self):
-        super(Example, self).__init__()
-        
-        self.initKeithley()
-        self.initUI()
-        #self.initPlot()
+class Keithley_GUI(QtGui.QMainWindow):
 
-    def initKeithley(self):
-        port = '/dev/tty.usbserial'
-        port = '/dev/tty.usbmodem1411'
-        port = '/dev/tty.KeySerial1'
-        connected = False
+    def __init__(self, port, connected=True)):
+        super(Example, self).__init__()
+
+        self.initKeithley(port, connected=connected))
+        self.initUI()
+
+    def initKeithley(self, port, connected):
         if connected:
-            self.keithley = kc.Keithley(port=port)
+            self.keithley = kc.Keithley(port)
         else:
             self.keithley = kc.FakeKeithley()
-        
-        
-    def initUI(self):      
+
+
+    def initUI(self):
 
         grid = QtGui.QGridLayout()
         self.main_widget = QtGui.QWidget(self)
         self.main_widget.setLayout(grid)
         self.setCentralWidget(self.main_widget)
-        
+
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy = QtGui.QSizePolicy()
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        
+
         # Here we define the buttons and inputs
-        
+
         # Output Toggle
         self.output = QtGui.QCheckBox('Output On', self)
         self.output.toggle()
@@ -63,7 +59,7 @@ class Example(QtGui.QMainWindow):
         hbox.addWidget(self.output)
         grid.addLayout(hbox, 0, 0)
 
-        
+
         # Make plotting area
         red = (255,0,0)
         green = (0,255,0)
@@ -151,14 +147,14 @@ class Example(QtGui.QMainWindow):
         ##############################################
 
         self.statusBar()
-        
+
         self.setGeometry(200, 200, 1000, 500)
         self.setWindowTitle('Keithley Controller')
         self.show()
-        
-        
+
+
     def buttonClicked(self):
-      
+
         sender = self.sender()
 
         if sender.text() == "reset":
@@ -167,14 +163,14 @@ class Example(QtGui.QMainWindow):
             self.keithley.set_output_off()
             self.output.setCheckState(False)
             self.trigLabel.setText('Num Trigs: %s' %1)
-            self.statusBar().showMessage("Output Off") 
+            self.statusBar().showMessage("Output Off")
 
         if sender.text() == "num_trigs":
             self.keithley.set_num_triggers(int(self.trigEdit.text()))
             response = self.keithley.get_num_triggers()
             self.trigLabel.setText('Num Trigs: %s' %response)
             self.trigEdit.setText('')
-            
+
          ######## Sweep Parameter Buttons ########
 
         if sender.text() == "Start Sweep!":
@@ -182,7 +178,7 @@ class Example(QtGui.QMainWindow):
             stop = int(self.stopEdit.text())
             step = float(self.stepEdit.text())
             num_sweeps = int(self.numSweepsEdit.text())
-            sweep_data = self.keithley.sweep(start=start,  stop=stop, 
+            sweep_data = self.keithley.sweep(start=start,  stop=stop,
                                         step=step, num_sweeps=num_sweeps)
             print(sweep_data[0])
             if sweep_data != None:
@@ -190,13 +186,13 @@ class Example(QtGui.QMainWindow):
                 self.a1.setData(sweep_data[1], sweep_data[2])
 
     def toggleOutput(self, state):
-      
+
         if state == QtCore.Qt.Checked:
             self.keithley.set_output_on()
-            self.statusBar().showMessage("Output On") 
+            self.statusBar().showMessage("Output On")
         else:
             self.keithley.set_output_off()
-            self.statusBar().showMessage("Output Off") 
+            self.statusBar().showMessage("Output Off")
 
     def setTrig(self):
         self.keithley.set_num_triggers(int(self.trigEdit.text()))
@@ -206,9 +202,9 @@ class Example(QtGui.QMainWindow):
 
     """  Make sure to close the serial connection before exit """
     def closeEvent(self, event):
-        
+
         reply = QtGui.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtGui.QMessageBox.Yes | 
+            "Are you sure to quit?", QtGui.QMessageBox.Yes |
             QtGui.QMessageBox.No, QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
@@ -218,10 +214,15 @@ class Example(QtGui.QMainWindow):
             time.sleep(.25)
             event.accept()
         else:
-            event.ignore()  
+            event.ignore()
 
 if __name__ == '__main__':
-    
+
+    if len(sys.argv) > 1:
+        port = float(sys.argv[1])
+    else:
+        print("Need to specify port for the SourceMeter.")
+        sys.exit()
     app = QtGui.QApplication(sys.argv)
-    ex = Example()
+    ex = Keithley_GUI(port, connected=False)
     sys.exit(app.exec_())

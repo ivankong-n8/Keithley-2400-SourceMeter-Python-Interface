@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import time
 import keithley_serial as ks
@@ -9,13 +10,13 @@ The keithley object that will manage the transmission of data and commands.
 """
 
 class Keithley:
-    # It would be good to have a class variable that prevented the 
+    # It would be good to have a class variable that prevented the
     # creation of more than one keithley object at a time!
     # This is it, but currently it does nothing
     keithleyExists = False
-    
 
-    def __init__(self, port='/dev/tty.KeySerial1'):
+
+    def __init__(self, port):
         keithleyExists = True
         self.ser = ks.start_serial(port=port)
         # Now run start up commands
@@ -24,7 +25,7 @@ class Keithley:
     def run_start_up_commands(self):
         for com in start_up_commands:
             self.send_command(com)
-            time.sleep(.01)   
+            time.sleep(.01)
 
     def open_serial(self):
         ks.close_serial(self.ser)
@@ -71,7 +72,7 @@ class Keithley:
             self.send_command(':SOUR:FUNC VOLT')
         else:
             print("Unknown source setting!")
-    
+
     def set_source_voltage(self, voltage):
         if type(voltage) == int or type(voltage) == float:
             if voltage > 200:
@@ -84,7 +85,7 @@ class Keithley:
             self.send_command(':SOUR:VOLT %s' %voltage)
         else:
             print("Bad voltage sent")
-   
+
     def set_source_current(self, current):
         if type(current) == int or type(current) == float:
             if current > 1:
@@ -97,7 +98,7 @@ class Keithley:
             self.send_command(':SOUR:CURR %s' %current)
         else:
             print("Bad current sent")
-   
+
     def set_sensor_type(self, sensor_type):
         sensor_type = sensor_type.lower()
         if sensor_type == 'current' or sensor_type == 'curr' or sensor_type == 'c':
@@ -109,15 +110,15 @@ class Keithley:
         else:
             print("Unknown sensor setting!")
             return None
-    
+
     def set_sensor_range(self, sensor_type, sensor_range):
         sensor_type = self.set_sensor_type(sensor_type)
         print("Sensor type set to %s" %sensor_type)
         if type(sensor_range) == int or type(sensor_range) == float:
             order = int(('%.2E' %sensor_range)[5:])
-            if sensor_type == 'voltage':    
+            if sensor_type == 'voltage':
                 self.send_command(':SENS:VOLT:RANG 10E%s' %order)
-            elif sensor_type == 'current':    
+            elif sensor_type == 'current':
                 self.send_command(':SENS:CURR:RANG 10E%s' %order)
             else:
                 print("Shouldn't get here!")
@@ -131,7 +132,7 @@ class Keithley:
             self.send_command(':SENS:VOLT:PROT %sE%s' %(coeff, order))
         else:
             print("Bad compliance value sent.")
-   
+
     def set_current_compliance(self, limit):
         if type(limit) == int or type(limit) == float:
             coeff = float(('%.2E' %limit)[:3])
@@ -142,11 +143,11 @@ class Keithley:
 
     def set_num_triggers(self, num):
         if type(num) == int:
-            if num < 1: 
+            if num < 1:
                 print("Number of triggers must be between 1-2500")
                 print("Triggers set to 1")
                 num = 1
-            if num > 2500: 
+            if num > 2500:
                 print("Number of triggers must be between 1-2500")
                 print("Triggers set to 2500")
                 num = 2500
@@ -224,7 +225,7 @@ class Keithley:
         time.sleep(.25)
         self.send_command(':OUTP OFF')
         return parse_data(response, data_type=data_type)
-        
+
 
 """
 This function parses the data returned from the Keithley.
@@ -233,7 +234,7 @@ This creates an array of {Time, Volts, Amps, Ohms}.
 Each element is a column vector for easy plotting.
 KEYWORDS:
 data_type = 'v' returns only time and volts, 'c', only time and current,
-'r' only time and ohms. 
+'r' only time and ohms.
 """
 def parse_data(data, data_type=None):
     # Clean up the strings, splits into list
@@ -275,7 +276,7 @@ start_up_commands = ["*RST",
                      ":SYST:AZER:STAT OFF",
                      ":SOUR:DELAY 0.0",
                      ":DISP:ENAB OFF"]
-                 
+
 class FakeKeithley(object):
     def __init__(self):
         for method in Keithley.__dict__:
