@@ -7,6 +7,8 @@ import numpy as np
 
 """
 The keithley object that will manage the transmission of data and commands.
+
+author: T. Max Roberts
 """
 
 class Keithley:
@@ -14,7 +16,6 @@ class Keithley:
     # creation of more than one keithley object at a time!
     # This is it, but currently it does nothing
     keithleyExists = False
-
 
     def __init__(self, port):
         keithleyExists = True

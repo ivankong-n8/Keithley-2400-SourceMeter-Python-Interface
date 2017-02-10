@@ -7,6 +7,8 @@ import serial
 """
 Open a port for serial communication with the Keithley.
 Returns: serial object
+
+author: T. Max Roberts
 """
 def start_serial(port='/dev/tty.KeySerial1'):
 

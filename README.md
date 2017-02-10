@@ -24,4 +24,5 @@ Requires the pyqtgraph and numpy packages.
 
 Notes:
 - installing pyqt can be a bit of a pain (at least on macOS). This is a good explanation: link to that explanation.
+- Timing of sweep steps appears to be accurate only to a couple of ms. If you request a 0-10V sweep with 1V steps amd 1 ms delays, you get increments of 1V, but the times vary up to a few ms.
 - The GUI is mostly meant as a use example, very under developed...

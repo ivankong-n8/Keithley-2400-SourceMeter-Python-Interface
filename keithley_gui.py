@@ -14,11 +14,8 @@ author: T. Max Roberts
 """
 
 import sys, time
-#from PyQt4 import QtGui, QtCore
+from pyqtgraph import PlotWidget
 from pyqtgraph.Qt import QtGui, QtCore
-# For plotting
-import pyqtgraph as pg
-# For keithley
 import keithley_control as kc
 
 class Keithley_GUI(QtGui.QMainWindow):
@@ -64,9 +61,9 @@ class Keithley_GUI(QtGui.QMainWindow):
         red = (255,0,0)
         green = (0,255,0)
         blue = (0,0,255)
-        self.plotWidget1 = pg.PlotWidget()
+        self.plotWidget1 = PlotWidget()
         self.a0 = self.plotWidget1.plot([], [], pen=blue)
-        self.plotWidget2 = pg.PlotWidget()
+        self.plotWidget2 = PlotWidget()
         self.a1 = self.plotWidget2.plot([], [], pen=green)
         vbox = QtGui.QVBoxLayout()
         vbox.addWidget(self.plotWidget1)
@@ -222,7 +219,8 @@ if __name__ == '__main__':
         port = float(sys.argv[1])
     else:
         print("Need to specify port for the SourceMeter.")
+        print("Something like: python keithley_gui.py port_for_keithley")
         sys.exit()
     app = QtGui.QApplication(sys.argv)
-    ex = Keithley_GUI(port, connected=False)
+    ex = Keithley_GUI(port, connected=False)  ##### CHANGE THIS TO TRUE!!!
     sys.exit(app.exec_())
