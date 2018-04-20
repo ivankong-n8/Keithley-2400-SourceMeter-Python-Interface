@@ -20,10 +20,10 @@ import keithley_control as kc
 
 class Keithley_GUI(QtGui.QMainWindow):
 
-    def __init__(self, port, connected=True)):
+    def __init__(self, port, connected=True):
         super(Example, self).__init__()
 
-        self.initKeithley(port, connected=connected))
+        self.initKeithley(port, connected=connected)
         self.initUI()
 
     def initKeithley(self, port, connected):
@@ -215,12 +215,12 @@ class Keithley_GUI(QtGui.QMainWindow):
 
 if __name__ == '__main__':
 
-    if len(sys.argv) > 1:
-        port = float(sys.argv[1])
-    else:
-        print("Need to specify port for the SourceMeter.")
-        print("Something like: python keithley_gui.py port_for_keithley")
-        sys.exit()
+    # if len(sys.argv) > 1:
+    #     port = float(sys.argv[1])
+    # else:
+    #     print("Need to specify port for the SourceMeter.")
+    #     print("Something like: python keithley_gui.py port_for_keithley")
+    #     sys.exit()
     app = QtGui.QApplication(sys.argv)
-    ex = Keithley_GUI(port, connected=False)  ##### CHANGE THIS TO TRUE!!!
+    ex = Keithley_GUI(port, connected=True)  ##### CHANGE THIS TO TRUE!!!
     sys.exit(app.exec_())
